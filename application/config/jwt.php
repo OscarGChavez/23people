@@ -1,0 +1,8 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+// Store your secret key here
+// Make sure you use better, long, more random key than this
+$config['jwt_key'] = '23people//&YBDJHASB·//))NSHAASD';
+// Token timeout in minutes
+$config['token_timeout'] = 180;
