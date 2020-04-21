@@ -89,7 +89,7 @@ $autoload['drivers'] = array();
 |
 |	$autoload['helper'] = array('url', 'file');
 */
-$autoload['helper'] = array('url','jwt', 'authorization');
+$autoload['helper'] = array('url','jwt', 'authorization', 'general');
 
 /*
 | -------------------------------------------------------------------
@@ -103,7 +103,6 @@ $autoload['helper'] = array('url','jwt', 'authorization');
 | config files.  Otherwise, leave it blank.
 |
 */
-$autoload['config'] = array();
 $autoload['config'] = array('jwt');
 
 /*

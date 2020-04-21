@@ -52,3 +52,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['default_controller'] = 'welcome';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = TRUE;
+
+/* API Routes */
+// Token
+$route['token'] = 'api/token/token';
+// Courses
+$route['courses'] = 'api/courses/courses';
+$route['courses/all'] = 'api/courses/courses_all';
+$route['courses/(:any)'] = 'api/courses/courses_by_id/$1';
+// Students
+$route['students'] = 'api/students/students';
+$route['students/all'] = 'api/students/students_all';
+$route['students/(:any)'] = 'api/students/students_by_id/$1';
