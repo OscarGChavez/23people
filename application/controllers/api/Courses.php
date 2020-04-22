@@ -213,24 +213,33 @@ class Courses extends REST_Controller{
 		// Validate token
 		AUTHORIZATION::verify_request($this->input->request_headers());
 
-		// Get data from DB
-		$course = Model\Courses::find($id);
+		// Check if recived ID is valid
+		if ($this->checkCourseID($id)) {
 
-		// Prepare response data
-		$data = array(
-					'id'   => $course->id_courses,
-					"name" => $course->name,
-					"code" => $course->code
+			// Get data from DB
+			$course = Model\Courses::find($id);
 
-				);
+			// Prepare response data
+			$data = array(
+						'id'   => $course->id_courses,
+						"name" => $course->name,
+						"code" => $course->code
 
-		$response = array("course" => $data);
+					);
 
-		try{
-			$this->set_response( $response, REST_Controller::HTTP_OK);
-		}
-		catch(Exception $e) {
-			$this->set_response( $e, REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+			$response = array("course" => $data);
+
+			try{
+				$this->set_response( $response, REST_Controller::HTTP_OK);
+			}
+			catch(Exception $e) {
+				$this->set_response( $e, REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+			}
+		}else{
+			$response = array("msg" => "Course id don't exists!");
+			$code     = REST_Controller::HTTP_NOT_FOUND;
+
+			$this->set_response( $response, $code);
 		}
 	}
 
@@ -355,7 +364,7 @@ class Courses extends REST_Controller{
 	public function courses_delete(){
 
 		// Validate token
-		AUTHORIZATION::verify_request($this->input->request_headers(), true);
+		AUTHORIZATION::verify_request($this->input->request_headers());
 
 		// Get data from GET
 		$idCourse = intval($this->input->get("id"));

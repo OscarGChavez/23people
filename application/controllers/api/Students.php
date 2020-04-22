@@ -187,29 +187,38 @@ class Students extends REST_Controller{
 		// Validate token
 		AUTHORIZATION::verify_request($this->input->request_headers());
 
-		// Get data from DB
-		$students = Model\Students::all();
+		// Check if recived ID is valid
+		if ($this->checkStudentID($id)) {
 
-		// Prepare response data
-		$data = array();
-		foreach ($students as $item) {
-			array_push($data, array(
-									'id'       => $item->id_students,
-									'rut'      => formatRut($item->rut),
-									'name'     => $item->name,
-									'lastName' => $item->lastName,
-									'age'      => $item->age,
-									'course'   => $item->course()->name
-								));
-		}
+			// Get data from DB
+			$students = Model\Students::all();
 
-		$response = array("students" => $data);
+			// Prepare response data
+			$data = array();
+			foreach ($students as $item) {
+				array_push($data, array(
+										'id'       => $item->id_students,
+										'rut'      => formatRut($item->rut),
+										'name'     => $item->name,
+										'lastName' => $item->lastName,
+										'age'      => $item->age,
+										'course'   => $item->course()->name
+									));
+			}
 
-		try{
-			$this->set_response( $response, REST_Controller::HTTP_OK);
-		}
-		catch(Exception $e) {
-			$this->set_response( $e, REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+			$response = array("students" => $data);
+
+			try{
+				$this->set_response( $response, REST_Controller::HTTP_OK);
+			}
+			catch(Exception $e) {
+				$this->set_response( $e, REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+			}
+		}else{
+			$response = array("msg" => "Student id don't exists!");
+			$code     = REST_Controller::HTTP_NOT_FOUND;
+
+			$this->set_response( $response, $code);
 		}
 	}
 
@@ -377,7 +386,7 @@ class Students extends REST_Controller{
 	public function students_delete(){
 
 		// Validate token
-		AUTHORIZATION::verify_request($this->input->request_headers(), true);
+		AUTHORIZATION::verify_request($this->input->request_headers());
 
 		// Get data from GET
 		$idStudent = intval($this->input->get("id"));
