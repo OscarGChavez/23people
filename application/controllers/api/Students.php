@@ -33,7 +33,7 @@ class Students extends REST_Controller{
 			// Get student by ID
 			$student = Model\Students::find($idStudent);
 
-			if (!is_null($course)) {
+			if (!is_null($student)) {
 				return true;
 			}
 		}
@@ -187,38 +187,29 @@ class Students extends REST_Controller{
 		// Validate token
 		AUTHORIZATION::verify_request($this->input->request_headers());
 
-		// Check if recived ID is valid
-		if ($this->checkStudentID($id)) {
+		// Get data from DB
+		$students = Model\Students::all();
 
-			// Get data from DB
-			$students = Model\Students::all();
+		// Prepare response data
+		$data = array();
+		foreach ($students as $item) {
+			array_push($data, array(
+									'id'       => $item->id_students,
+									'rut'      => formatRut($item->rut),
+									'name'     => $item->name,
+									'lastName' => $item->lastName,
+									'age'      => $item->age,
+									'course'   => $item->course()->name
+								));
+		}
 
-			// Prepare response data
-			$data = array();
-			foreach ($students as $item) {
-				array_push($data, array(
-										'id'       => $item->id_students,
-										'rut'      => formatRut($item->rut),
-										'name'     => $item->name,
-										'lastName' => $item->lastName,
-										'age'      => $item->age,
-										'course'   => $item->course()->name
-									));
-			}
+		$response = array("students" => $data);
 
-			$response = array("students" => $data);
-
-			try{
-				$this->set_response( $response, REST_Controller::HTTP_OK);
-			}
-			catch(Exception $e) {
-				$this->set_response( $e, REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
-			}
-		}else{
-			$response = array("msg" => "Student id don't exists!");
-			$code     = REST_Controller::HTTP_NOT_FOUND;
-
-			$this->set_response( $response, $code);
+		try{
+			$this->set_response( $response, REST_Controller::HTTP_OK);
+		}
+		catch(Exception $e) {
+			$this->set_response( $e, REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -233,27 +224,36 @@ class Students extends REST_Controller{
 		// Validate token
 		AUTHORIZATION::verify_request($this->input->request_headers());
 
-		// Get data from DB
-		$student = Model\Students::find($id);
+		// Check if recived ID is valid
+		if ($this->checkStudentID($id)) {
 
-		// Prepare response data
-		$data = array(
-					'id'       => $student->id_students,
-					'rut'      => formatRut($student->rut),
-					'name'     => $student->name,
-					'lastName' => $student->lastName,
-					'age'      => $student->age,
-					'course'   => $student->course()->name
+			// Get data from DB
+			$student = Model\Students::find($id);
 
-				);
+			// Prepare response data
+			$data = array(
+						'id'       => $student->id_students,
+						'rut'      => formatRut($student->rut),
+						'name'     => $student->name,
+						'lastName' => $student->lastName,
+						'age'      => $student->age,
+						'course'   => $student->course()->name
 
-		$response = array("student" => $data);
+					);
 
-		try{
-			$this->set_response( $response, REST_Controller::HTTP_OK);
-		}
-		catch(Exception $e) {
-			$this->set_response( $e, REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+			$response = array("student" => $data);
+
+			try{
+				$this->set_response( $response, REST_Controller::HTTP_OK);
+			}
+			catch(Exception $e) {
+				$this->set_response( $e, REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+			}
+		}else{
+			$response = array("msg" => "Student id don't exists!");
+			$code     = REST_Controller::HTTP_NOT_FOUND;
+
+			$this->set_response( $response, $code);
 		}
 	}
 
